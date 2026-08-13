@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
+import ApiError from '../utils/apiError';
 
 const UserSchema = new mongoose.Schema({
     FullName : {
@@ -33,6 +34,7 @@ UserSchema.methods.isPasswordCorrect = async function(Password){
 }
 
 UserSchema.methods.generate_token = async function(){
+    if(!process.env.JWT_SECRET) throw new ApiError(400, "JWT_SECRET not configured")
     return jwt.sign({
         _id:this._id,
         Fullname : this.FullName,
