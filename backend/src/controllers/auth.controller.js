@@ -75,3 +75,13 @@ export const logout = (_,res)=>{
   )
 }
 
+export const updateProfile = asyncHandler(async (req,res)=>{
+    const {ProfilePic} = req.body;
+    if(!ProfilePic) throw new ApiError(400,"Profile pic not available")
+    const userId = req.user._id
+    const uploadedResponse = await cloudinary.uploader.upload(ProfilePic)
+    const updatedUser = await User.findByIdAndUpdate(userId,{ProfilePic : uploadedResponse.secureUrl},{new:true});
+    res.status(200).json(
+      new ApiResponse(300,updatedUser,"User profile updated successfully")
+    )
+})
