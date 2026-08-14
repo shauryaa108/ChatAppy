@@ -44,11 +44,34 @@ export const signup = asyncHandler(async (req,res)=>{
     });
     await sendWelcomeEmail(newUser.Email, newUser.FullName,process.env.CLIENT_URL)
     return res.status(200).json(
-        new ApiResponse(200,newUser,"User singed up")
+        new ApiResponse(200,newUser,"User signed up")
     )
 
 })
 
-export default {
-    signup
+export const login = asyncHandler(async (req,res)=>{
+  const {Email,Password} = req.body;
+  const user = await User.findOne({Email : Email}).select("+Password");
+  if(!user) throw new ApiError(500,"Invalid credentials");
+  if(!user.isPasswordCorrect(Password)) throw new ApiError(500,"Invalid credentials");
+
+  const tkn = await user.generate_token();
+  res.cookie("jwtUser",tkn, {
+    maxAge: 7 * 24 * 60 * 60 * 1000, // MS
+    httpOnly: true, // prevent XSS attacks: cross-site scripting
+    sameSite: "strict", // CSRF attacks
+    secure: process.env.NODE_ENV === "development" ? false : true,
+    });
+    res.status(200).json(
+        new ApiResponse(200,user,"User logged in")
+    )
+})
+
+// this logout is not correct, it should have user in res and then it should clear his cookies or any sort of authentication should be there
+export const logout = (_,res)=>{
+  res.cookie("jwtUser","",{maxAge:0});
+  res.status(200).json(
+    new ApiResponse(200,{},"Cookies cleared successfully")
+  )
 }
+
