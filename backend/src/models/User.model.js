@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
-import ApiError from '../utils/apiError';
+import ApiError from '../utils/apiError.js';
 
 const UserSchema = new mongoose.Schema({
     FullName : {

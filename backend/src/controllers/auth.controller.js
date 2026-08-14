@@ -2,9 +2,14 @@ import User from "../models/User.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
+import { Resend } from 'resend';
+import "dotenv/config"
+import { sendWelcomeEmail } from "../emails/emailHandler.js";
+
 
 export const signup = asyncHandler(async (req,res)=>{
 
+    const resend = new Resend(process.env.EMAIL_API_KEY)
     const {FullName, Email, Password} = req.body;
     if (!FullName || !Email || !Password) {
       throw new ApiError(400, "All fields are required");
@@ -37,6 +42,7 @@ export const signup = asyncHandler(async (req,res)=>{
     sameSite: "strict", // CSRF attacks
     secure: process.env.NODE_ENV === "development" ? false : true,
     });
+    await sendWelcomeEmail(newUser.Email, newUser.FullName,process.env.CLIENT_URL)
     return res.status(200).json(
         new ApiResponse(200,newUser,"User singed up")
     )
