@@ -3,6 +3,7 @@ import dotenv from'dotenv'
 import path from "path"
 import { DB_CONN } from './lib/db.connection.js';
 import userRouter from './routes/auth.route.js'
+import messageRouter from './routes/message.route.js'
 import cookieParser from "cookie-parser";
 
 dotenv.config()
@@ -13,6 +14,7 @@ const __dirname = path.resolve();
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/user", userRouter);
+app.use("/api/message", messageRouter);
 
 
 // make ready for deployment

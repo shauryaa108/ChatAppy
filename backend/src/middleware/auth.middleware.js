@@ -4,7 +4,7 @@ import 'dotenv/config'
 import ApiError from '../utils/apiError.js'
 
 
-export const auth_user = async (req,res,next)=>{
+export const protectRoute = async (req,res,next)=>{
     try {
         const token = req.cookies.jwtUser
         if(!token) throw new ApiError(401,"Unauthorised request : No tokens provided");
