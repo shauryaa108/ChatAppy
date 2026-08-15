@@ -42,7 +42,7 @@ export const signup = asyncHandler(async (req,res)=>{
     sameSite: "strict", // CSRF attacks
     secure: process.env.NODE_ENV === "development" ? false : true,
     });
-    await sendWelcomeEmail(newUser.Email, newUser.FullName,process.env.CLIENT_URL)
+    // await sendWelcomeEmail(newUser.Email, newUser.FullName,process.env.CLIENT_URL)
     return res.status(200).json(
         new ApiResponse(200,newUser,"User signed up")
     )
